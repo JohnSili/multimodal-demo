@@ -55,7 +55,13 @@ class ModelManager:
         )
         
         print("Загрузка модели...")
-        attn_implementation = "flash_attention_2" if device == "cuda" else "eager"
+        try:
+            import flash_attn
+            attn_implementation = "flash_attention_2" if device == "cuda" else "eager"
+        except ImportError:
+            attn_implementation = "eager"
+            if device == "cuda":
+                print("FlashAttention2 не установлен, используется eager attention")
         
         if device == "cuda":
             self._model = AutoModelForImageTextToText.from_pretrained(
