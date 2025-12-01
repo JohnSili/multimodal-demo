@@ -1,0 +1,32 @@
+
+services:
+  smolvlm2-backend:
+    build:
+      context: ./backend
+      dockerfile: ${DOCKERFILE:-Dockerfile}
+    container_name: smolvlm2-backend
+    network_mode: bridge
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - ./models:/models
+      - ./frontend:/app/frontend:ro
+    environment:
+      - MODEL_NAME=${MODEL_NAME:-HuggingFaceTB/SmolVLM2-2.2B-Instruct}
+      - MODEL_SIZE=${MODEL_SIZE:-instruct}
+      - DEVICE=${DEVICE:-cpu}
+      - TORCH_DTYPE=${TORCH_DTYPE:-float32}
+      - HOST=${HOST:-0.0.0.0}
+      - PORT=${PORT:-8000}
+      - WORKERS=${WORKERS:-1}
+      - HF_HOME=${HF_HOME:-/models}
+      - TRANSFORMERS_CACHE=${TRANSFORMERS_CACHE:-/models}
+      - HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-/models}
+      - MAX_IMAGE_SIZE=${MAX_IMAGE_SIZE:-10485760}
+      - MAX_IMAGE_DIMENSION=${MAX_IMAGE_DIMENSION:-4096}
+      - SESSION_TIMEOUT=${SESSION_TIMEOUT:-3600}
+      - OCR_LANGUAGES=${OCR_LANGUAGES:-["en","ru"]}
+      - OCR_DEFAULT_LANGUAGE=${OCR_DEFAULT_LANGUAGE:-en}
+      - CORS_ORIGINS=${CORS_ORIGINS:-["*"]}
+    restart: unless-stopped
+
